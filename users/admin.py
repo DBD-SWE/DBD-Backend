@@ -1,3 +1,8 @@
-from django.contrib import admin
+from django.contrib import admin;
+from .models import Type, Permission, User, TypePermission;
 
-# Register your models here.
+admin.site.register(Type);
+admin.site.register(Permission);
+admin.site.register(User);
+admin.site.register(TypePermission);
+

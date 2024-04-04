@@ -10,7 +10,7 @@ class Commodity(models.Model):
     name = models.CharField(max_length=255)
     description = models.CharField(max_length=255)
     location = models.CharField(max_length=255)
-    type = models.ForeignKey(CommodityType, on_delete=models.CASCADE)
+    type = models.ForeignKey(CommodityType, on_delete=models.CASCADE)   
 
 class Hotel(models.Model):
     commodity = models.OneToOneField(Commodity, on_delete=models.CASCADE)
