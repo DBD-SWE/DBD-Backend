@@ -11,7 +11,6 @@ from .utils import send_verification_email
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.db.models import Q
 
- 
 class RegisterUserView(APIView):
     def post(self, request):
         serializer = UserSerializer(data=request.data)
