@@ -3,6 +3,7 @@ from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.utils.translation import gettext_lazy as _c
+from users.models import Type
 
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -25,6 +26,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=False)
+    type = models.ForeignKey(to=Type, on_delete=models.CASCADE, related_name='users', default=Type.get_default_pk)
+
 
     verification_code = models.CharField(max_length=6, blank=True, null=True)
     code_sent_at = models.DateTimeField(null=True, blank=True)
@@ -33,6 +36,10 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
+    def save(self, *args, **kwargs):
+        if self._state.adding:
+            self.role = Type.objects.get(name='user')
+        super().save(*args, **kwargs)
 
 
 

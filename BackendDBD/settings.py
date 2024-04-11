@@ -50,7 +50,13 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+     'users.middlewares.PermissionMiddleware',
+   
+
 ]
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
 
 ROOT_URLCONF = 'BackendDBD.urls'
 
@@ -137,5 +143,7 @@ REST_FRAMEWORK = {
 }
 
 AUTH_USER_MODEL = 'authentication.User'
+
+
 
 from .local_settings import *
