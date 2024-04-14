@@ -26,7 +26,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=False)
-    type = models.ForeignKey(to=Type, on_delete=models.CASCADE, related_name='users', default=Type.get_default_pk)
+    type = models.ForeignKey(to=Type, on_delete=models.CASCADE, related_name='users',)
 
 
     verification_code = models.CharField(max_length=6, blank=True, null=True)
@@ -37,10 +37,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
     def save(self, *args, **kwargs):
-        if self._state.adding:
-            self.role = Type.objects.get(name='user')
-        super().save(*args, **kwargs)
-
+            if self._state.adding:
+                default_type, created = Type.objects.get_or_create(name='user')
+                self.type = default_type
+            super().save(*args, **kwargs)
+        
 
 
 class UserInfo(models.Model):
