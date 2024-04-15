@@ -3,8 +3,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import viewsets
-from users.models import Type
-from users.serializers import TypeSerializer
+from users.models import Type, Permission
+from users.serializers import TypeSerializer, PermissionSerializer
 
 @api_view(['GET'])
 def test(request):
@@ -21,3 +21,7 @@ class TypeViewSet(viewsets.ModelViewSet):
         types = Type.objects.all()
         serializer = TypeSerializer(types, many=True)
         return Response(serializer.data)
+
+class PermissionViewSet(viewsets.ModelViewSet):
+    queryset = Permission.objects.all()
+    serializer_class = PermissionSerializer

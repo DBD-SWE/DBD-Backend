@@ -3,6 +3,13 @@ from django.db import models
 class Type(models.Model):
     name = models.CharField(max_length=255)
     permissions = models.ManyToManyField('Permission', related_name='types' )
+    
+    ''' 
+    
+    suggestion to add description field as at is important to know what the type is about:
+        description = models.CharField(max_length=255, blank=True)
+        
+    '''
 
     def __str__(self):
         return self.name
@@ -18,16 +25,3 @@ class Permission(models.Model):
 
     def __str__(self):
         return self.name + ' - ' + self.identifier
-    
-    
-
-
-# class TypePermission(models.Model):
-#     type = models.ForeignKey(Type, on_delete=models.CASCADE)
-#     permission = models.ForeignKey(Permission, on_delete=models.CASCADE)
-
-#     class Meta:
-#         unique_together = ('type', 'permission')
-
-#     def __str__(self):
-#         return f"{self.type.name} - {self.permission.name}"
