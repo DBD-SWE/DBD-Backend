@@ -24,7 +24,7 @@ class PermissionMiddleware(MiddlewareMixin):
         
         # Allow full access for the first user (temporary setup)
         if get_user_model().objects.first() == request.user:
-            return None  # This line allows the first user unrestricted access
+            return None  
 
         # Access user type and check permissions
         user_type = getattr(request.user, 'type', None)
