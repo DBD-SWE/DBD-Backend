@@ -26,7 +26,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=False)
-    type = models.ForeignKey(to=Type, on_delete=models.CASCADE, related_name='users',)
+
+    type = models.ForeignKey(to=Type, on_delete=models.CASCADE, related_name='users', )
 
 
     verification_code = models.CharField(max_length=6, blank=True, null=True)
@@ -45,7 +46,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class UserInfo(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='info')
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='user_info')
     full_name = models.CharField(max_length=100, blank=True)
     date_of_birth = models.DateField(blank=True, null=True)
     occupation = models.CharField(max_length=100, blank=True)

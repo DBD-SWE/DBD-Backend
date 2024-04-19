@@ -22,9 +22,10 @@ class PermissionMiddleware(MiddlewareMixin):
         if not request.user:
             return JsonResponse({"message": "You are not authenticated."}, status=401)
         
-        # Allow full access for the first user (temporary setup)
-        if get_user_model().objects.first() == request.user:
-            return None  
+        # Allow full access for  super user
+     
+        if request.user.is_superuser:
+            return None
 
         # Access user type and check permissions
         user_type = getattr(request.user, 'type', None)
