@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 class PermissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Permission
-        fields = ('name', 'identifier')
+        fields = ('id', 'name', 'identifier')
 
     def create(self, validated_data):
         return Permission.objects.create(**validated_data)
@@ -19,7 +19,7 @@ class PermissionIDOnlySerializer(serializers.ModelSerializer):
         fields = ['id']
 
 class TypeSerializer(serializers.ModelSerializer):
-    permissions = PermissionIDOnlySerializer(many=True)
+    permissions = PermissionIDOnlySerializer(many=True, write_only=True)
 
     class Meta:
         model = Type
@@ -46,3 +46,9 @@ class TypeSerializer(serializers.ModelSerializer):
                 return type_instance
         except Exception as e:
             raise serializers.ValidationError(str(e))
+        
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        permissions = PermissionSerializer(instance.permissions.all(), many=True).data
+        representation['permissions'] = permissions
+        return representation
