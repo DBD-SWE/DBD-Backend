@@ -1,10 +1,18 @@
+from django.urls import get_resolver
 from rest_framework import serializers
 from .models import Permission, Type
 from django.db import transaction
 import logging
 logger = logging.getLogger(__name__)
+        
+def validate_route(value):
+    valid_paths = [pattern.pattern._route for pattern in get_resolver().url_patterns]
+    if value not in valid_paths:
+        raise serializers.ValidationError(f"The path {value} is not a valid route.")
+    return value
     
 class PermissionSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(validators=[validate_route])
     class Meta:
         model = Permission
         fields = ('id', 'name', 'identifier')
@@ -48,7 +56,7 @@ class TypeSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(str(e))
         
     def to_representation(self, instance):
-        representation = super().to_representation(instance)
+        representation = super().to_representation(instance) 
         permissions = PermissionSerializer(instance.permissions.all(), many=True).data
         representation['permissions'] = permissions
         return representation
