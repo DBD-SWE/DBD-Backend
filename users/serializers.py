@@ -26,20 +26,23 @@ class TypeSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'permissions')
 
     def create(self, validated_data):
-        permissions_data = validated_data.pop('permissions', [""])
-        with transaction.atomic():  
-            type_instance = Type.objects.create(**validated_data)
-            permission_ids = []
-            for perm in permissions_data:
-                try:
-                    permission_ids.append(perm['id'])
-                except KeyError:
-                    raise serializers.ValidationError({
-                        'permissions': 'Each permission must include an "id".',
-                        'data': permissions_data
-                    })
-            permissions = Permission.objects.filter(id__in=permission_ids)
-            if len(permissions) != len(permission_ids):
-                raise serializers.ValidationError("One or more permissions not found.")
-            type_instance.permissions.set(permissions)  # Link existing permissions by ID
-            return type_instance
+        try:
+            permissions_data = validated_data.pop('permissions', [""])
+            with transaction.atomic():  
+                type_instance = Type.objects.create(**validated_data)
+                permission_ids = []
+                for perm in permissions_data:
+                    try:
+                        permission_ids.append(perm['id'])
+                    except KeyError:
+                        raise serializers.ValidationError({
+                            'permissions': 'Each permission must include an "id".',
+                            'data': permissions_data
+                        })
+                permissions = Permission.objects.filter(id__in=permission_ids)
+                if len(permissions) != len(permission_ids):
+                    raise serializers.ValidationError("One or more permissions not found.")
+                type_instance.permissions.set(permissions)  # Link existing permissions by ID
+                return type_instance
+        except Exception as e:
+            raise serializers.ValidationError(str(e))
