@@ -32,7 +32,11 @@ class Permission(models.Model):
         help_text="Type of CRUD operation"
     )
 
+    class Meta:
+        unique_together = ('name', 'identifier')
+
     def __str__(self):
         return f"{self.name} - {CRUDOperations(self.identifier).name}"
+
 
 
