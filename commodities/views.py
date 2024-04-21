@@ -1,8 +1,10 @@
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework import status
-# Create your views here.
+from rest_framework import viewsets
+from .models import GuestHouse
+from .serializers import GuestHouseSerializer
 
-# test route that return test json
-def test(request):
-    return Response({"message": "Hello, World!"}, status=status.HTTP_200_OK)
+class GuestHouseViewSet(viewsets.ModelViewSet):
+    queryset = GuestHouse.objects.all()
+    serializer_class = GuestHouseSerializer
