@@ -10,8 +10,27 @@ from django.contrib.auth import authenticate
 from .utils import send_verification_email
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.db.models import Q
+from django.contrib.auth import authenticate
+from django.contrib.auth.signals import user_logged_in, user_login_failed
+from django.dispatch import receiver
+from rest_framework_simplejwt.views import TokenObtainPairView
+from activitylog.mixins import ActivityLogMixin
 
-class RegisterUserView(APIView):
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            user = serializer.user
+          
+            user_logged_in.send(sender=user.__class__, request=request, user=user)
+            return Response(serializer.validated_data, status=status.HTTP_200_OK)
+        else:
+            email = request.data.get('email', None)
+            user_login_failed.send(sender=None, request=request, credentials={'email': email})
+            return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+
+class RegisterUserView(ActivityLogMixin, APIView):
     def post(self, request):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
