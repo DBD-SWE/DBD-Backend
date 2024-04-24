@@ -1,16 +1,9 @@
 from django.db import models
-
+import enum
 
 class Type(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
     permissions = models.ManyToManyField('Permission', related_name='types' )
-    
-    ''' 
-    
-    suggestion to add description field as at is important to know what the type is about:
-        description = models.CharField(max_length=255, blank=True)
-        
-    '''
 
     def __str__(self):
         return self.name
@@ -20,12 +13,33 @@ class Type(models.Model):
             name='user'
         )
         return type.pk
+
+class CRUDOperations(enum.Enum):
+    CREATE = 'C'
+    READ = 'R'
+    UPDATE = 'U'
+    DELETE = 'D'
+
+    @classmethod
+    def choices(cls):
+        return [(key.value, key.name) for key in cls]
+
 class Permission(models.Model):
     name = models.CharField(max_length=255)
-    identifier = models.CharField(max_length=255)
+    identifier = models.CharField(
+        max_length=1,
+        choices=CRUDOperations.choices(),
+        help_text="Type of CRUD operation"
+    )
+
+    class Meta:
+        unique_together = ('name', 'identifier')
 
     def __str__(self):
-        return self.name + ' - ' + self.identifier
+        return f"{self.name} - {CRUDOperations(self.identifier).name}"
+
+
+
 
 class BannedUser(models.Model):
 
