@@ -23,4 +23,5 @@ urlpatterns = [
     path('auth/', include('authentication.urls')),
     path('users/', include('users.urls')),
     path('commodities/', include('commodities.urls')),
+    path('activitylog/', include('activitylog.urls')),
 ]

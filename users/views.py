@@ -12,6 +12,7 @@ from authentication.serializers import UserSerializer
 from rest_framework.decorators import action
 from django.utils.crypto import get_random_string
 from django.core.mail import send_mail
+from activitylog.mixins import ActivityLogMixin
 
 @api_view(['GET'])
 def test(request):
@@ -23,8 +24,7 @@ def test(request):
 
 
 
-
-class TypeViewSet(viewsets.ModelViewSet):
+class TypeViewSet(ActivityLogMixin, viewsets.ModelViewSet):
     queryset = Type.objects.all()
     serializer_class = TypeSerializer
 
@@ -37,7 +37,7 @@ class TypeViewSet(viewsets.ModelViewSet):
     def destroy(self, request, *args, **kwargs):
         return super().destroy(request, *args, **kwargs)
     
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(ActivityLogMixin, viewsets.ModelViewSet):
     queryset = User.objects.all()
 
     serializer_class = UserSerializer
@@ -45,8 +45,13 @@ class UserViewSet(viewsets.ModelViewSet):
     filter_backends = (DynamicSearchFilter,)
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        else:
+            return Response({'message': 'No users found'}, status=status.HTTP_404_NOT_FOUND)
+
 
    
     def destroy(self, request, *args, **kwargs):
@@ -131,7 +136,7 @@ class UserViewSet(viewsets.ModelViewSet):
                 return Response({'message': 'User activated'}, status=status.HTTP_200_OK)
             else:
                 return Response({'message': 'Invalid token'}, status=status.HTTP_400_BAD_REQUEST)
-class PermissionViewSet(viewsets.ModelViewSet):
+class PermissionViewSet(ActivityLogMixin,viewsets.ModelViewSet):
     queryset = Permission.objects.all()
     serializer_class = PermissionSerializer
 
