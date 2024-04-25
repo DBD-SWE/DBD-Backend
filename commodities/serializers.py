@@ -47,3 +47,12 @@ class AttractionSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data['type'] = "Attraction"
         return super().create(validated_data)
+    
+    def update(self, instance, validated_data):
+        validated_data['type'] = "Attraction"
+        return super().update(instance, validated_data)
+    
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data['district'] = DistrictSerializer(instance.district).data
+        return data
