@@ -4,14 +4,16 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 
-class CommodityType(models.Model):
-    type_name = models.CharField(max_length=255)
+# class CommodityType(models.Model):
+#     type_name = models.CharField(max_length=255)
 
 class Commodity(models.Model):
     name = models.CharField(max_length=255)
     description = models.CharField(max_length=255)
-    location = models.CharField(max_length=255)
-    type = models.ForeignKey(CommodityType, on_delete=models.CASCADE)   
+    location_address = models.CharField(max_length=255)
+    location_coordinates_lat = models.CharField(max_length=255)
+    location_coordinates_long = models.CharField(max_length=255)
+    type = models.CharField(max_length=255)  
 
 class FoodType(models.TextChoices):
     VEGAN = 'V', 'Vegan'

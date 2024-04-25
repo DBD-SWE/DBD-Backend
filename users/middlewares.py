@@ -22,6 +22,10 @@ class PermissionMiddleware(MiddlewareMixin):
         if not request.user:
             return JsonResponse({"message": "You are not authenticated."}, status=401)
         
+        # Check if the user is the first in the database
+        if get_user_model().objects.first() == request.user:
+            return None
+        
         # Allow full access for  super user
      
         if request.user.is_superuser:

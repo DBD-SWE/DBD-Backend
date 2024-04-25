@@ -7,12 +7,23 @@ class CommoditiesSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class GuestHouseSerializer(serializers.ModelSerializer):
-    commodity = CommoditiesSerializer(many=True)
     class Meta:
         model = GuestHouse
-        fields = ('__all__')  
+        fields = ("id", "name", "description", 
+                  "location_address", "location_coordinates_lat", "location_coordinates_long", 
+                  "category", "number_of_bathrooms", "number_of_bedrooms", 
+                  "rating", "accessibility", "food_type", "images")  
+
+    def create(self, validated_data):
+        validated_data['type'] = "GuestHouse"
+        return super().create(validated_data)
             
 class AttractionSerializer(serializers.ModelSerializer):
+    type = "Attraction"
     class Meta:
         model = Attraction
         fields = '__all__'
+    
+    def create(self, validated_data):
+        validated_data['type'] = "Attraction"
+        return super().create(validated_data)
