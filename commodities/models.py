@@ -8,7 +8,7 @@ class Commodity(models.Model):
     name = models.CharField(max_length=255)
     description = models.CharField(max_length=255)
     district = models.ForeignKey(District, on_delete=models.CASCADE)         
-    location_coordinates_lat = models.CharField(max_length=255)
+    location_coordinates_lat = models.CharField(max_length=255) 
     location_coordinates_long = models.CharField(max_length=255)
     type = models.CharField(max_length=255)  
 

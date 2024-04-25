@@ -16,7 +16,7 @@ class GuestHouseSerializer(serializers.ModelSerializer):
         model = GuestHouse
         fields = (
             "id", "name", "description", 
-            "district_id", "location_coordinates_lat", "location_coordinates_long", 
+            "district", "location_coordinates_lat", "location_coordinates_long", 
             "category", "number_of_bathrooms", "number_of_bedrooms", 
             "rating", "accessibility", "food_type", "images"
         )  
@@ -24,6 +24,15 @@ class GuestHouseSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data['type'] = "GuestHouse"
         return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        validated_data['type'] = "GuestHouse"
+        return super().update(instance, validated_data)
+    
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data['district'] = DistrictSerializer(instance.district).data
+        return data
             
 class AttractionSerializer(serializers.ModelSerializer):
     type = "Attraction"
@@ -31,7 +40,7 @@ class AttractionSerializer(serializers.ModelSerializer):
         model = Attraction
         fields = (
             "id", "name", "description", 
-            "district_id", "location_coordinates_lat", "location_coordinates_long",
+            "district", "location_coordinates_lat", "location_coordinates_long",
             "images"
         )
     
