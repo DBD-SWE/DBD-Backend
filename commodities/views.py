@@ -14,25 +14,6 @@ class DistrictViewSet(viewsets.ModelViewSet):
 class CommodityViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Commodity.objects.all()
     serializer_class = CommoditiesSerializer
-    
-    def commoditiesPerEachDistrict(self, request):
-        data = []
-        for district in District.objects.all():
-            commodities = Commodity.objects.filter(district=district)
-            data.append({
-                'district': district.name,
-                'commodities': CommoditiesSerializer(commodities, many=True).data
-            })
-        return Response(data, status=status.HTTP_200_OK)
-    
-    def commoditiesPerDistrict(self, request, pk=None):
-        district = District.objects.get(pk=pk)
-        commodities = Commodity.objects.filter(district=district)
-        data = {
-            'district': district.name,
-            'commodities': CommoditiesSerializer(commodities, many=True).data
-        }
-        return Response(data, status=status.HTTP_200_OK)
 
 class GuestHouseViewSet(viewsets.ModelViewSet):
     queryset = GuestHouse.objects.all()
@@ -50,5 +31,13 @@ class DashboardData(viewsets.ViewSet):
             'users_count': User.objects.count(),
             'attractions_count': Attraction.objects.count(),
             'guest_houses_count': GuestHouse.objects.count(),
+            'districts_data': [],
+            'commodities': CommoditiesSerializer(Commodity.objects.all(), many=True).data
         }
+        for district in District.objects.all():
+            commodity_count = Commodity.objects.filter(district=district).count()
+            data['districts_data'].append({
+                'district': district.name,
+                'commodities_count': commodity_count
+            })
         return Response(data, status=status.HTTP_200_OK)

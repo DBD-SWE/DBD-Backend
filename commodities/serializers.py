@@ -10,6 +10,11 @@ class CommoditiesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Commodity
         fields = '__all__'
+        
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        del data['district']
+        return data
 
 class GuestHouseSerializer(serializers.ModelSerializer):
     class Meta:
