@@ -3,27 +3,28 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import viewsets
 
+from activitylog.mixins import ActivityLogMixin
 from authentication.models import User
 from .models import GuestHouse, Attraction, Commodity, District
 from .serializers import GuestHouseSerializer, AttractionSerializer, CommoditiesSerializer, DistrictSerializer
 
-class DistrictViewSet(viewsets.ModelViewSet):
+class DistrictViewSet(ActivityLogMixin, viewsets.ModelViewSet):
     queryset = District.objects.all()
     serializer_class = DistrictSerializer
 
-class CommodityViewSet(viewsets.ReadOnlyModelViewSet):
+class CommodityViewSet(ActivityLogMixin, viewsets.ReadOnlyModelViewSet):
     queryset = Commodity.objects.all()
     serializer_class = CommoditiesSerializer
 
-class GuestHouseViewSet(viewsets.ModelViewSet):
+class GuestHouseViewSet(ActivityLogMixin, viewsets.ModelViewSet):
     queryset = GuestHouse.objects.all()
     serializer_class = GuestHouseSerializer 
     
-class AttractionViewSet(viewsets.ModelViewSet):
+class AttractionViewSet(ActivityLogMixin, viewsets.ModelViewSet):
     queryset = Attraction.objects.all()
     serializer_class = AttractionSerializer
     
-class DashboardData(viewsets.ViewSet):
+class DashboardData(ActivityLogMixin, viewsets.ViewSet):
     def list(self, request):
         data = {
             'districts_count': District.objects.count(),
