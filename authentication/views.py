@@ -47,8 +47,7 @@ class RegisterUserView(ActivityLogMixin, APIView):
 
 class UserInfoView(APIView):
    
-
-
+    
     def get(self, request, user_id=None):
       
         # If no user_id is provided, default to the current user's UserInfo
@@ -112,18 +111,3 @@ class VerifyEmailView(APIView):
             return Response({"ok": "ok"})
         else:
             return Response({"error": "Verification code has expired."}, status=status.HTTP_400_BAD_REQUEST)
-
-class LookupUsersView(APIView):
-    permission_classes = [IsAuthenticated]
-    
-    def get(self, request):
-
-     
-
-        # add to exclude yourself too!
-        # exclude also those with no info
-        last_50_users =  User.objects.exclude(Q(meeting_requests_sent__request_to=request.user) | Q(meeting_requests_received__request_from=request.user) | Q(id=request.user.id) | Q(info__isnull=True)).order_by('-last_login')[:50]
-        serializer = UserSerializer(last_50_users, many=True)
-        return Response(serializer.data)
-    
-    

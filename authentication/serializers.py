@@ -3,9 +3,10 @@ from .models import User, UserInfo
 # from meetup.models import Interest
 from rest_framework import serializers
 from users.models import BannedUser, InvitedUser
+from images.serializers import ImageModelSerializer
 
 
-class UserInfoSerializer(serializers.ModelSerializer):
+class UserInfoSerializer(ImageModelSerializer):
     # interests = InterestSerializer(many=True, read_only=True)
     # interests_data = ListField(child=serializers.DictField(), write_only=True, required=False)
 
