@@ -1,3 +1,4 @@
+from django.db import IntegrityError
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -46,14 +47,7 @@ class RegisterUserView(ActivityLogMixin, APIView):
 
 class UserInfoView(APIView):
    
-    def get_permissions(self):
-        """
-        Instantiates and returns the list of permissions that this view requires.
-        """
-        if self.request.method == 'POST':
-            return  [AllowAny()]
-        else:
-            return [IsAuthenticated()]
+
 
     def get(self, request, user_id=None):
       
@@ -66,37 +60,20 @@ class UserInfoView(APIView):
         serializer = UserInfoSerializer(userinfo)
         return Response({**serializer.data, 'id': userinfo.user.id, 'email': userinfo.user.email})
     def post(self, request):
-        email = request.data.get('email')
-        password = request.data.get('password')
 
-        try:
-            # Retrieve the user by email
-            user = User.objects.get(email=email)
-        except User.DoesNotExist:
-            return Response({"message": "Invalid credentials."}, status=status.HTTP_401_UNAUTHORIZED)
-
-        # Check if the password is correct
-        if user.check_password(password):
-            # Proceed if the user is not active (assuming they are unverified)
+        user = request.user
         
-            if UserInfo.objects.filter(user=user).exists():
-                return Response({"detail": "UserInfo already exists. Please verify your email to update your info."}, status=status.HTTP_400_BAD_REQUEST)
-
-            # Exclude email and password from the serializer data
-            mutable_data = request.data.copy()
-            mutable_data.pop('email', None)
-            mutable_data.pop('password', None)
-
-            serializer = UserInfoSerializer(data=mutable_data)
-            if serializer.is_valid():
+        serializer = UserInfoSerializer(data=request.data)
+        if serializer.is_valid():
+            try:
                 serializer.save(user=user)
-                return Response({**serializer.data, "email": email, "password": password , 'id': user.id}, status=status.HTTP_201_CREATED)
-            
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            except IntegrityError:
+                return Response({"message": "User info already exists, please use the patch request."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'user_info': serializer.data, 'message': 'successfuly updated user'}, status=status.HTTP_201_CREATED)
         
-        else:
-            return Response({"message": "Invalid credentials."}, status=status.HTTP_401_UNAUTHORIZED)
-        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
     def patch(self, request):
         userinfo =  get_object_or_404(UserInfo, user=request.user)  # Ensure it's the user's own UserInfo
         serializer = UserInfoSerializer(userinfo, data=request.data, partial=True)  # Allow partial updates

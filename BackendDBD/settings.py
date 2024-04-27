@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'users',
     'authentication',
     'activitylog',
+    'images',
     'rest_framework',
 ]
 
@@ -164,5 +165,11 @@ AUTH_USER_MODEL = 'authentication.User'
 #         },
 #     },
 # }
+
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = 'media'
+STATIC_ROOT = ''
+STATIC_URL = '/static/'
 
 from .local_settings import *

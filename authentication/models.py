@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.utils.translation import gettext_lazy as _c
 from users.models import Type
+from images.models import Image
 
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -51,6 +52,7 @@ class UserInfo(models.Model):
     date_of_birth = models.DateField(blank=True, null=True)
     occupation = models.CharField(max_length=100, blank=True)
     biography = models.CharField(max_length =256, blank=True)
+    image = models.ForeignKey(Image, on_delete=models.SET_NULL, blank=True, null=True)
     # interests = models.ManyToManyField('meetup.Interest', related_name='users', blank=True)
 
     def __str__(self):

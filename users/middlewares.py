@@ -14,13 +14,12 @@ map_request_method = {
 class PermissionMiddleware(MiddlewareMixin):
     def process_request(self, request):
       
-        if request.path.startswith('/auth') or request.path.startswith('/admin'):
+        if request.path.startswith('/auth') or request.path.startswith('/admin') or request.path.startswith('/media'):
             return None
-        request.user = JWTAuthentication().authenticate(request)[0]
-        
-        # Check if the user is authenticated
-        if not request.user:
-            return JsonResponse({"message": "You are not authenticated."}, status=401)
+        try:
+            request.user = JWTAuthentication().authenticate(request)[0]
+        except Exception as e:
+            return JsonResponse({"message": "Please authenticate to view this route."}, status=401)
         
         # Check if the user is the first in the database
         if get_user_model().objects.first() == request.user:
