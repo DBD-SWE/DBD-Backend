@@ -45,11 +45,20 @@ class ActivityLogMixin:
             }
             try:
                 data['content_type'] = ContentType.objects.get_for_model(self.get_queryset().model)
-                data["content_object"] = self.get_object()
+              
             except (AttributeError, ValidationError):
                 data['content_type'] = None
             except AssertionError:
                 pass
+            try:
+              
+               data["content_object"] = self.get_object()
+              
+            except (AttributeError, ValidationError):
+                data['content_object'] = None
+            except AssertionError:
+                pass
+            
 
             ActivityLog.objects.create(**data)
 
