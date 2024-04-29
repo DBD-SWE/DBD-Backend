@@ -30,11 +30,11 @@ class AttractionViewSet(ActivityLogMixin, viewsets.ModelViewSet):
 class DashboardData(ActivityLogMixin, viewsets.ViewSet):
     def list(self, request):
         data = {
-            'districts_count': District.objects.count(),
-            'commodities_count': Commodity.objects.count(),
-            'users_count': User.objects.count(),
-            'attractions_count': Attraction.objects.count(),
-            'guest_houses_count': GuestHouse.objects.count(),
+            'districts_count': District.objects.count(), 
+            'commodities_count': Commodity.objects.count(), 
+            'users_count': User.objects.count(), 
+            'attractions_count': Attraction.objects.count(), 
+            'guest_houses_count': GuestHouse.objects.count(), 
             'districts_data': 
                 District.objects.annotate(
                     commodities_count = Count('commodity')

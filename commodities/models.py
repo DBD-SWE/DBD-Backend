@@ -24,7 +24,7 @@ class GuestHouse(Commodity):
     rating = models.FloatField(validators=[MinValueValidator(0.0), MaxValueValidator(5.0)])
     accessibility = models.BooleanField(default=False)
     food_type = models.CharField(max_length=2, choices=FoodType.choices)
-    images = models.URLField(max_length=2000, blank=True, null=True)
-
+    images = models.ManyToManyField('images.Image', related_name='guesthouses')
+    
 class Attraction(Commodity):  
-    images = models.URLField(max_length=2000, blank=True, null=True)
+    images = models.ManyToManyField('images.Image', related_name='attractions')
