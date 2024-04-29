@@ -45,40 +45,24 @@ class PermissionSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         return Permission.objects.create(**validated_data)
 
-class PermissionIDOnlySerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField()
-    class Meta:
-        model = Permission
-        fields = ['id']
-
 class TypeSerializer(serializers.ModelSerializer):
-    permissions = PermissionIDOnlySerializer(many=True, write_only=True)
+    permissions = serializers.PrimaryKeyRelatedField(many=True, queryset=Permission.objects.all())
 
     class Meta:
         model = Type
         fields = ('id', 'name', 'permissions')
-
+    
     def create(self, validated_data):
-        try:
-            permissions_data = validated_data.pop('permissions', [""])
-            with transaction.atomic():  
-                type_instance = Type.objects.create(**validated_data)
-                permission_ids = []
-                for perm in permissions_data:
-                    try:
-                        permission_ids.append(perm['id'])
-                    except KeyError:
-                        raise serializers.ValidationError({
-                            'permissions': 'Each permission must include an "id".',
-                            'data': permissions_data
-                        })
-                permissions = Permission.objects.filter(id__in=permission_ids)
-                if len(permissions) != len(permission_ids):
-                    raise serializers.ValidationError("One or more permissions not found.")
-                type_instance.permissions.set(permissions)  # Link existing permissions by ID
-                return type_instance
-        except Exception as e:
-            raise serializers.ValidationError(str(e))
+        permission_data = validated_data.pop('permissions')
+        type_instance = Type.objects.create(**validated_data)
+        type_instance.permissions.set(permission_data)
+        return type_instance
+    
+    def update(self, instance, validated_data):
+        permission_data = validated_data.pop('permissions')
+        update = super().update(instance, validated_data)
+        update.permissions.set(permission_data)
+        return update
         
     def to_representation(self, instance):
         representation = super().to_representation(instance) 
