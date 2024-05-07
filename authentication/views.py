@@ -16,7 +16,7 @@ from django.contrib.auth.signals import user_logged_in, user_login_failed
 from django.dispatch import receiver
 from rest_framework_simplejwt.views import TokenObtainPairView
 from activitylog.mixins import ActivityLogMixin
-
+from rest_framework import viewsets
 
 class CustomTokenObtainPairView(ActivityLogMixin, TokenObtainPairView):
     def post(self, request, *args, **kwargs):
@@ -111,3 +111,6 @@ class VerifyEmailView(APIView):
             return Response({"ok": "ok"})
         else:
             return Response({"error": "Verification code has expired."}, status=status.HTTP_400_BAD_REQUEST)
+
+# Assign user a type
+

@@ -54,7 +54,7 @@ class ActivityLogMixin:
               
                data["content_object"] = self.get_object()
               
-            except (AttributeError, ValidationError):
+            except Exception:
                 data['content_object'] = None
             except AssertionError:
                 pass

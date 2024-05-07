@@ -4,6 +4,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import viewsets
+from rest_framework.views import APIView
 from users.filters import DynamicSearchFilter
 from users.models import InvitedUser, Type, Permission, BannedUser
 from authentication.models import User, UserInfo
@@ -131,3 +132,20 @@ class UserViewSet(ActivityLogMixin, viewsets.ModelViewSet):
 class PermissionViewSet(ActivityLogMixin,viewsets.ModelViewSet):
     queryset = Permission.objects.all()
     serializer_class = PermissionSerializer
+
+class AssignUserType(APIView):
+
+    def post(self, request, user_id):
+
+        try:
+            user = User.objects.get(pk=user_id)
+        except User.DoesNotExist:
+            return Response({'message': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+        if 'type_id' not in request.data:
+            return Response({'message': 'type_id is required'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            user.type = Type.objects.get(pk=request.data.get('type_id'))
+        except Type.DoesNotExist:
+            return Response({'message': 'User type not found'}, status=status.HTTP_404_NOT_FOUND)
+        user.save()
+        return Response({'message': 'User type assigned successfully.', 'user': UserSerializer(user).data}, status=status.HTTP_200_OK)
