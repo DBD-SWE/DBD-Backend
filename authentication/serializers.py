@@ -12,7 +12,7 @@ class UserInfoSerializer(ImageModelSerializer):
 
     class Meta:
         model = UserInfo
-        fields = ['full_name', 'date_of_birth', 'occupation', 'biography', 'image']
+        fields = ['first_name' , 'last_name',  'image']
 
     def create(self, validated_data):
       

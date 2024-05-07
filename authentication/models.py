@@ -48,10 +48,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class UserInfo(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='user_info')
-    full_name = models.CharField(max_length=100, blank=True)
-    date_of_birth = models.DateField(blank=True, null=True)
-    occupation = models.CharField(max_length=100, blank=True)
-    biography = models.CharField(max_length =256, blank=True)
+    first_name = models.CharField(max_length=50, blank=True)
+    last_name = models.CharField(max_length=50, blank=True)
     image = models.ForeignKey(Image, on_delete=models.SET_NULL, blank=True, null=True)
     # interests = models.ManyToManyField('meetup.Interest', related_name='users', blank=True)
 

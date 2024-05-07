@@ -95,6 +95,7 @@ class UserViewSet(ActivityLogMixin, viewsets.ModelViewSet):
             # if there is user_info with body, get_or_create user_info
             if 'user_info' in request.data:
                 user_info = request.data['user_info']
+    
                 user_info_instance = UserInfo.objects.create(user=user, **user_info)
                 user_info_instance.save()
             

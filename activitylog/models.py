@@ -30,7 +30,7 @@ class ActivityLog(models.Model):
     action_type = models.CharField(max_length=15, choices=ACTION_TYPES)
     action_time = models.DateTimeField(auto_now_add=True)
     remarks = models.TextField(null=True, blank=True)
-    status = models.CharField(max_length=7, choices=ACTION_STATUS, default=SUCCESS)
+    status = models.CharField(max_length=12, choices=ACTION_STATUS, default=SUCCESS)
     
 
     # for generic relations

@@ -18,7 +18,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from activitylog.mixins import ActivityLogMixin
 
 
-class CustomTokenObtainPairView(TokenObtainPairView):
+class CustomTokenObtainPairView(ActivityLogMixin, TokenObtainPairView):
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid(raise_exception=True):

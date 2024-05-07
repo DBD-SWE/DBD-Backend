@@ -14,7 +14,7 @@ map_request_method = {
 class PermissionMiddleware(MiddlewareMixin):
     def process_request(self, request):
       
-        if request.path.startswith('/auth') or request.path.startswith('/admin') or request.path.startswith('/media'):
+        if request.path.startswith('/auth') or request.path.startswith('/admin') or request.path.startswith('/media') or request.path.startswith('/auth/token/refresh'):
             return None
         try:
             request.user = JWTAuthentication().authenticate(request)[0]
