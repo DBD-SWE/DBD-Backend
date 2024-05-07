@@ -1,5 +1,8 @@
 from rest_framework import serializers
+
+from images.models import Image
 from .models import GuestHouse, Attraction, Commodity, District 
+from django.db import transaction
 
 class DistrictSerializer(serializers.ModelSerializer):
     class Meta:
@@ -17,6 +20,7 @@ class CommoditiesSerializer(serializers.ModelSerializer):
         return data
 
 class GuestHouseSerializer(serializers.ModelSerializer):
+    images = serializers.PrimaryKeyRelatedField(many=True, queryset=Image.objects.all())
     class Meta:
         model = GuestHouse
         fields = (
@@ -25,22 +29,29 @@ class GuestHouseSerializer(serializers.ModelSerializer):
             "category", "number_of_bathrooms", "number_of_bedrooms", 
             "rating", "accessibility", "food_type", "images"
         )  
-
+    
     def create(self, validated_data):
         validated_data['type'] = "GuestHouse"
-        return super().create(validated_data)
+        images_data = validated_data.pop('images')
+        guesthouse = GuestHouse.objects.create(**validated_data)
+        guesthouse.images.set(images_data)
+        return guesthouse
 
     def update(self, instance, validated_data):
         validated_data['type'] = "GuestHouse"
-        return super().update(instance, validated_data)
+        validated_data['images'] = validated_data.pop('images')
+        update = super().update(instance, validated_data)
+        update.images.set(validated_data['images'])
+        return update
     
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data['district'] = DistrictSerializer(instance.district).data
+        data['images'] = [image.image.url for image in instance.images.all()]
         return data
             
 class AttractionSerializer(serializers.ModelSerializer):
-    type = "Attraction"
+    images = serializers.PrimaryKeyRelatedField(many=True, queryset=Image.objects.all())
     class Meta:
         model = Attraction
         fields = (
@@ -51,13 +62,20 @@ class AttractionSerializer(serializers.ModelSerializer):
     
     def create(self, validated_data):
         validated_data['type'] = "Attraction"
-        return super().create(validated_data)
+        images_data = validated_data.pop('images')
+        attraction = Attraction.objects.create(**validated_data)
+        attraction.images.set(images_data)
+        return attraction
     
     def update(self, instance, validated_data):
         validated_data['type'] = "Attraction"
-        return super().update(instance, validated_data)
+        validated_data['images'] = validated_data.pop('images')
+        update = super().update(instance, validated_data)
+        update.images.set(validated_data['images'])
+        return update
     
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data['district'] = DistrictSerializer(instance.district).data
+        data['images'] = [image.image.url for image in instance.images.all()]
         return data
