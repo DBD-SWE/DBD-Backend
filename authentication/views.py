@@ -34,11 +34,12 @@ class CustomTokenObtainPairView(ActivityLogMixin, TokenObtainPairView):
 class RegisterUserView(ActivityLogMixin, APIView):
     def post(self, request):
         serializer = UserSerializer(data=request.data)
+
         if serializer.is_valid():
             user = serializer.save()
             send_verification_email(user)
             return Response({"user": serializer.data,  "message": "Check your email for the verification code."}, status=status.HTTP_201_CREATED)
-
+        print(serializer.errors)
         # Check if the email is already taken
         if 'email' in serializer.errors:
             return Response({"message": "Email already taken."}, status=status.HTTP_400_BAD_REQUEST)

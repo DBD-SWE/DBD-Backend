@@ -2,6 +2,7 @@ from django.http import JsonResponse, HttpResponse
 from django.utils.deprecation import MiddlewareMixin
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.contrib.auth import get_user_model
+import re
 
 map_request_method = {
     'GET': 'R',
@@ -13,8 +14,9 @@ map_request_method = {
 
 class PermissionMiddleware(MiddlewareMixin):
     def process_request(self, request):
-      
-        if request.path.startswith('/auth') or request.path.startswith('/admin') or request.path.startswith('/media') or request.path.startswith('/auth/token/refresh'):
+        
+        if request.path.startswith('/auth') or request.path.startswith('/admin') or request.path.startswith('/media') or request.path.startswith('/auth/token/refresh') or re.match(r'/users/users/[0-9]+/accept_invite', request.path ):
+            print('hello')
             return None
         try:
             request.user = JWTAuthentication().authenticate(request)[0]

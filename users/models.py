@@ -5,6 +5,7 @@ class Type(models.Model):
     name = models.CharField(max_length=255, unique=True)
     permissions = models.ManyToManyField('Permission', related_name='types' )
 
+
     def __str__(self):
         return self.name
     @classmethod

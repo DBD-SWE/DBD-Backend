@@ -2,7 +2,7 @@
 from .models import User, UserInfo
 # from meetup.models import Interest
 from rest_framework import serializers
-from users.models import BannedUser, InvitedUser
+from users.models import BannedUser, InvitedUser, Type
 from images.serializers import ImageModelSerializer
 
 
@@ -21,9 +21,8 @@ class UserInfoSerializer(ImageModelSerializer):
         return user_info
 
     def update(self, instance, validated_data):
-  
+        
         instance = super().update(instance, validated_data)
-        print(validated_data)
 
  
         return instance
@@ -43,10 +42,18 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id', 'email', 'password', 'user_info', 'banned', 'invited'
                   , 'type')
+        # make type not required
+        extra_kwargs = {
+            'type': {'required': False}
+        }
 
     def create(self, validated_data):
         user_info_data = validated_data.pop('user_info', None)
+        # add the default type to user, Type has a class method to get the default type
+        validated_data['type_id'] = Type.get_default_pk()
+        
         user = User.objects.create_user(**validated_data)
+
 
         if user_info_data:
             UserInfo.objects.create(user=user, **user_info_data)

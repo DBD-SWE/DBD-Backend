@@ -14,6 +14,7 @@ from rest_framework.decorators import action
 from django.utils.crypto import get_random_string
 from django.core.mail import send_mail
 from activitylog.mixins import ActivityLogMixin
+from rest_framework.permissions import AllowAny
 
 @api_view(['GET'])
 def test(request):
@@ -35,6 +36,9 @@ class UserViewSet(ActivityLogMixin, viewsets.ModelViewSet):
     serializer_class = UserSerializer
     
     filter_backends = (DynamicSearchFilter,)
+    authentication_classes = [] 
+    permission_classes = [AllowAny] 
+
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
         page = self.paginate_queryset(queryset)
