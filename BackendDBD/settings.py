@@ -43,9 +43,12 @@ INSTALLED_APPS = [
     'activitylog',
     'images',
     'rest_framework',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -171,5 +174,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = 'media'
 STATIC_ROOT = ''
 STATIC_URL = '/static/'
+
+CORS_ORIGIN_ALLOW_ALL = True
 
 from .local_settings import *

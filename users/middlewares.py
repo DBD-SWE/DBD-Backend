@@ -35,7 +35,7 @@ class PermissionMiddleware(MiddlewareMixin):
         # Access user type and check permissions
         user_type = getattr(request.user, 'type', None)
         if user_type and user_type.permissions.filter(
-            name=request.path, 
+            name=request.path[1:], 
             identifier=map_request_method[request.method]
         ).exists():
             return None
