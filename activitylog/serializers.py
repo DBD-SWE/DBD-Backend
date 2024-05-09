@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from .models import ActivityLog
+from authentication.models import UserInfo
 
 from django.contrib.contenttypes.models import ContentType
 
@@ -27,3 +28,9 @@ class ActivityLogSerializer(serializers.ModelSerializer):
         if obj.content_object:
             return str(obj.content_object)
         return None
+    
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        actor = UserInfo.objects.get(user=instance.actor)
+        data['actor'] = actor.first_name + ' ' + actor.last_name
+        return data
