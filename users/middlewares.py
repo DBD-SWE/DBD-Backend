@@ -33,9 +33,7 @@ class PermissionMiddleware(MiddlewareMixin):
             return None
         
         path = request.path[1:]      
-        parts = path.split('/')
-        if len(parts) > 2:
-            path = parts[0]+'/'+parts[1]+'/'
+        pathWithoutNumbers = re.sub(r'/[0-9]+', '', path)
 
         # Access user type and check permissions
         user_type = getattr(request.user, 'type', None)
