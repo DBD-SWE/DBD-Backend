@@ -38,11 +38,11 @@ class PermissionMiddleware(MiddlewareMixin):
         # Access user type and check permissions
         user_type = getattr(request.user, 'type', None)
         if user_type and user_type.permissions.filter(
-            name=path, 
+            name=pathWithoutNumbers, 
             identifier=map_request_method[request.method]
         ).exists():
             return None
         else:
-            return JsonResponse({"message": str(path)}, status=401)
+            return JsonResponse({"message": "you are not authorized to view this route."}, status=401)
 
 
