@@ -31,14 +31,20 @@ class PermissionMiddleware(MiddlewareMixin):
      
         if request.user.is_superuser:
             return None
+        
+        path = request.path[1:]      
+        parts = path.split('/')
+        if len(parts) > 2:
+            path = parts[0]+'/'+parts[1]+'/'
 
         # Access user type and check permissions
         user_type = getattr(request.user, 'type', None)
         if user_type and user_type.permissions.filter(
-            name=request.path[1:], 
+            name=path, 
             identifier=map_request_method[request.method]
         ).exists():
             return None
         else:
-            return JsonResponse({"message": "You are forbidden to view this route."}, status=401)
+            return JsonResponse({"message": str(path)}, status=401)
+
 
