@@ -1,5 +1,6 @@
 import json
 from django.db import IntegrityError
+from django.urls import get_resolver
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -8,7 +9,7 @@ from rest_framework.views import APIView
 from users.filters import DynamicSearchFilter
 from users.models import InvitedUser, Type, Permission, BannedUser
 from authentication.models import User, UserInfo
-from users.serializers import TypeSerializer, PermissionSerializer
+from users.serializers import TypeSerializer, PermissionSerializer, get_all_url_patterns
 from authentication.serializers import UserSerializer
 from rest_framework.decorators import action
 from django.utils.crypto import get_random_string
@@ -20,7 +21,8 @@ from rest_framework.permissions import AllowAny
 def test(request):
     if request.method == 'GET':
         data = {
-            'user': str(request.user)
+            'user': str(request.user),
+            'urls': get_all_url_patterns(get_resolver())
         }
         return Response(data, status=status.HTTP_200_OK)
 

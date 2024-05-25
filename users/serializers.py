@@ -20,11 +20,14 @@ def get_all_url_patterns(resolver, base_path=''):
                 full_pattern = f"{base_path}{pattern.pattern.regex.pattern}"
                 # Remove regex characters and the end of string regex symbol
                 full_pattern = full_pattern.replace('^', '').replace('$', '').replace('\\Z', '')
-                url_patterns.append(full_pattern)
+                # Skip patterns with parameters
+                if '<' not in full_pattern and '>' not in full_pattern and full_pattern.split('/').__len__() > 2:
+                    url_patterns.append(full_pattern)
             else:
                 # Standard route patterns, remove the end of string symbol
                 full_pattern = f"{base_path}{pattern.pattern._route}".replace('\\Z', '')
-                url_patterns.append(full_pattern)
+                if full_pattern.split('/').__len__() > 2:
+                    url_patterns.append(full_pattern)
     return url_patterns
 
 def validate_route(value):
