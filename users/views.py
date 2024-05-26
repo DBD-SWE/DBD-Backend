@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from users.filters import DynamicSearchFilter
 from users.models import InvitedUser, Type, Permission, BannedUser
 from authentication.models import User, UserInfo
-from users.serializers import TypeSerializer, PermissionSerializer, get_all_url_patterns
+from users.serializers import TypeSerializer, PermissionSerializer
 from authentication.serializers import UserSerializer
 from rest_framework.decorators import action
 from django.utils.crypto import get_random_string
@@ -22,7 +22,6 @@ def test(request):
     if request.method == 'GET':
         data = {
             'user': str(request.user),
-            'urls': get_all_url_patterns(get_resolver())
         }
         return Response(data, status=status.HTTP_200_OK)
 
@@ -135,7 +134,7 @@ class UserViewSet(ActivityLogMixin, viewsets.ModelViewSet):
                 return Response({'message': 'User activated'}, status=status.HTTP_200_OK)
             else:
                 return Response({'message': 'Invalid token'}, status=status.HTTP_400_BAD_REQUEST)
-class PermissionViewSet(ActivityLogMixin,viewsets.ModelViewSet):
+class PermissionViewSet(ActivityLogMixin,viewsets.ReadOnlyModelViewSet):
     queryset = Permission.objects.all()
     serializer_class = PermissionSerializer
 
