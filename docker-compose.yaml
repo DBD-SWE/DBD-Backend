@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    volumes:
+      - mysql_data:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: DBD
+      MYSQL_USER: DBD
+      MYSQL_PASSWORD: your_mysql_password
+      MYSQL_ROOT_PASSWORD: your_root_password
+    ports:
+      - "3306:3306"
+
+  web:
+    build: .
+    command: gunicorn BackendDBD.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      DJANGO_SECRET_KEY: 'django-insecure-=bzyn%khqln2&8!*nmk-pnxer*yg9-dym8v4wlt(ehc@16ljj#'
+      DEBUG: 'True'
+      ALLOWED_HOSTS: '*'
+      DB_NAME: DBD
+      DB_USER: DBD
+      DB_PASSWORD: your_mysql_password
+      DB_HOST: db
+      DB_PORT: 3306
+
+volumes:
+  mysql_data:
